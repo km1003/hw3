@@ -1,6 +1,8 @@
+#include <fcntl.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include <sys/socket.h>
 #include <sys/time.h>
 #include <sys/types.h>
@@ -8,7 +10,16 @@
 #include <arpa/inet.h>
 #include <unistd.h>
 
+#define PORT 54321
+
+// tick period in milliseconds
+#define TICK_PERIOD 1000
+
+#define true 1
+#define false 0
 typedef char bool;
+
+char buf[32];
 
 uint64_t getuSecs()
 {
@@ -22,11 +33,13 @@ uint64_t getuSecs()
 
 int main(int argc, char* argv[])
 {
+  bool check = false;
+  bool tock = false;
   char arg_error_str[] = "Usage: client xxx.xxx.xxx.xxx\n";
-  char buffer[10] = "0123456789";
-  int sock;
+  char payload[32];
+  int count, sock;
   struct sockaddr_in server, client;
-  uint64_t start, end;
+  uint64_t start, end, tick, rtt_sum;
 
   // check args
   if(argc < 2){
@@ -43,24 +56,95 @@ int main(int argc, char* argv[])
     printf("socket error = %d\n", sock);
     return -1;
   }
-
+  int flags = fcntl(sock, F_GETFL);
+  flags |= O_NONBLOCK;
+  fcntl(sock, F_SETFL, flags);
+  count = 0;
+  rtt_sum = 0;
+  
+  // server address
   server.sin_family = AF_INET;
-  server.sin_port = htons(54321); // server port 54321
+  server.sin_port = htons(PORT);
   server.sin_addr.s_addr = inet_addr(argv[1]); // server ip taken from args
 
+  // client address
   client.sin_family = AF_INET;
   client.sin_port = htons(0);
   client.sin_addr.s_addr = htonl(INADDR_ANY);
 
+  // bind client to socket
   if((bind(sock, (struct sockaddr*)&client, sizeof(client))) < 0){
     printf("bind error\n");
     return -1;
   }
 
+  printf("sending udp packets to %s:%d", argv[1], PORT);
+
   while(1){
+    // create a tick to time sending packets to server
+    tick = getuSecs();
+    if(!((tick/1000) % TICK_PERIOD)){
+      if(!tock){
+        // detect packet loss: end timestamp was never set by server response
+        if(count > 0 && start == end)
+        {
+          printf("timeout");
+        }
+        count++;
+        tock = true;
+        printf("\n[%3d] ", count);
+        // put count as ascii string in payload
+        sprintf(payload, "%31d", count);
+        // send a udp packet to the server
+        int bytes_sent = sendto(sock, payload, strlen(payload), 0,
+          (struct sockaddr*)&server, sizeof(server));
+        if(bytes_sent != strlen(payload)){
+          printf("warning: sendto returned [%d] not [%d]",
+            bytes_sent, strlen(payload));
+        }
+        // timestamp
+        start = tick;
+        end = tick;
+      }
+    } else tock = false;
 
+    // check for received packet
+    socklen_t addrlen;
+    int bytes_rcvd = 0;
+    // check every 10 microseconds
+    if(count > 0 && !((tick/10) % (TICK_PERIOD/100))){
+      if(!check){
+//        printf("c ");
+//        fflush(stdout);
+        bytes_rcvd = recvfrom(sock, buf, strlen(payload), 0,
+          (struct sockaddr*)&server, &addrlen);
+        check = true;
+      }
+    } else check = false;
 
-  }
+    if(bytes_rcvd == strlen(payload)){
+      // check if this is the response to the last packet we sent
+      int id = atoi(buf);
+      if(id == count){
+        end = tick;
+        int i;
+        for(i = 0; i < bytes_rcvd; i++){
+          printf("%c", buf[i]);
+        }
+      }
+      else{ // packet had data from a different 'count' value
+        printf("warning got old packet");
+      }
+    }
+    else if(bytes_rcvd > 0){
+      printf("warning rcvd %d bytes instead of %d ",
+        bytes_rcvd, strlen(payload));
+      int i;
+      for(i = 0; i < bytes_rcvd; i++)
+        printf("%c", buf[i]);
+    }
+    
+  } // end while
 
   return 0;
 }
