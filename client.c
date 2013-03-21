@@ -12,7 +12,7 @@
 
 #define PORT 54321
 
-// tick period in milliseconds
+// tick period in milliseconds, how fast to send packets
 #define TICK_PERIOD 1000
 
 #define true 1
@@ -37,22 +37,25 @@ int main(int argc, char* argv[])
   bool tock = false;
   char arg_error_str[] = "Usage: client xxx.xxx.xxx.xxx\n";
   char payload[32];
-  int count, sock;
+  int count, num_rcvd, sock;
   struct sockaddr_in server, client;
   uint64_t start, end, tick, rtt_sum;
 
   // check args
-  if(argc < 2){
+  if(argc < 2)
+  {
     printf("%s", arg_error_str);
     return -1;
   }
-  if((inet_addr(argv[1]) == INADDR_NONE)){
+  if((inet_addr(argv[1]) == INADDR_NONE))
+  {
     printf("%s", arg_error_str);
     return -1;
   }
 
   // Init
-  if((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0){
+  if((sock = socket(PF_INET, SOCK_DGRAM, 0)) < 0)
+  {
     printf("socket error = %d\n", sock);
     return -1;
   }
@@ -60,7 +63,9 @@ int main(int argc, char* argv[])
   flags |= O_NONBLOCK;
   fcntl(sock, F_SETFL, flags);
   count = 0;
+  num_rcvd = 0;
   rtt_sum = 0;
+  sprintf(payload, "%31d", count);
   
   // server address
   server.sin_family = AF_INET;
@@ -73,22 +78,32 @@ int main(int argc, char* argv[])
   client.sin_addr.s_addr = htonl(INADDR_ANY);
 
   // bind client to socket
-  if((bind(sock, (struct sockaddr*)&client, sizeof(client))) < 0){
+  if((bind(sock, (struct sockaddr*)&client, sizeof(client))) < 0)
+  {
     printf("bind error\n");
     return -1;
   }
 
   printf("sending udp packets to %s:%d", argv[1], PORT);
 
-  while(1){
+  while(1)
+  {
     // create a tick to time sending packets to server
     tick = getuSecs();
-    if(!((tick/1000) % TICK_PERIOD)){
-      if(!tock){
+    if(!((tick/1000) % TICK_PERIOD))
+    {
+      if(!tock)
+      {
         // detect packet loss: end timestamp was never set by server response
         if(count > 0 && start == end)
         {
-          printf("timeout");
+          printf("timeout, rcvd %d out of %d", num_rcvd, count);
+        }
+        else if(count > 0 && start < end)
+        {
+          // the last sent packet got a reponse, output stats
+          printf(" rtt:%llu, avgrtt:%f, rcvd %d out of %d",
+            (end-start), ((float)rtt_sum)/num_rcvd, num_rcvd, count);
         }
         count++;
         tock = true;
@@ -98,7 +113,8 @@ int main(int argc, char* argv[])
         // send a udp packet to the server
         int bytes_sent = sendto(sock, payload, strlen(payload), 0,
           (struct sockaddr*)&server, sizeof(server));
-        if(bytes_sent != strlen(payload)){
+        if(bytes_sent != strlen(payload))
+        {
           printf("warning: sendto returned [%d] not [%d]",
             bytes_sent, strlen(payload));
         }
@@ -112,31 +128,41 @@ int main(int argc, char* argv[])
     socklen_t addrlen;
     int bytes_rcvd = 0;
     // check every 10 microseconds
-    if(count > 0 && !((tick/10) % (TICK_PERIOD/100))){
-      if(!check){
-//        printf("c ");
-//        fflush(stdout);
+    if(count > 0 && !((tick/10) % (TICK_PERIOD/100)))
+    {
+      if(!check)
+      {
         bytes_rcvd = recvfrom(sock, buf, strlen(payload), 0,
           (struct sockaddr*)&server, &addrlen);
         check = true;
       }
     } else check = false;
 
-    if(bytes_rcvd == strlen(payload)){
+    // a packet was received
+    if(bytes_rcvd == strlen(payload))
+    {
       // check if this is the response to the last packet we sent
       int id = atoi(buf);
-      if(id == count){
+      if(id == count)
+      {
+        // got server response, timestamp it and increment num_rcvd
+        num_rcvd++;
         end = tick;
+        rtt_sum += (end - start);
         int i;
-        for(i = 0; i < bytes_rcvd; i++){
+        for(i = 0; i < bytes_rcvd; i++)
+        {
           printf("%c", buf[i]);
         }
       }
-      else{ // packet had data from a different 'count' value
-        printf("warning got old packet");
+      else // packet had data from a different 'count' value
+      {
+        printf("warning got packet [%d] expected [%d], rtt avg is invalid",
+          id, count);
       }
     }
-    else if(bytes_rcvd > 0){
+    else if(bytes_rcvd > 0) // incomplete packet received
+    {
       printf("warning rcvd %d bytes instead of %d ",
         bytes_rcvd, strlen(payload));
       int i;
@@ -148,3 +174,4 @@ int main(int argc, char* argv[])
 
   return 0;
 }
+
