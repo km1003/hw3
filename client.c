@@ -13,7 +13,7 @@
 #define PORT 54321
 
 // tick period in milliseconds, how fast to send packets
-#define TICK_PERIOD 1000
+#define TICK_PERIOD 1500
 
 #define true 1
 #define false 0
@@ -38,7 +38,7 @@ int main(int argc, char* argv[])
   char arg_error_str[] = "Usage: client xxx.xxx.xxx.xxx\n";
   char payload[32];
   int count, num_rcvd, sock;
-  struct sockaddr_in server, client;
+  struct sockaddr_in server, client, response;
   uint64_t start, end, tick, rtt_sum;
 
   // check args
@@ -77,6 +77,11 @@ int main(int argc, char* argv[])
   client.sin_port = htons(0);
   client.sin_addr.s_addr = htonl(INADDR_ANY);
 
+  // reponse address
+  response.sin_family = AF_INET;
+  response.sin_port = htons(0);
+  response.sin_addr.s_addr = htonl(INADDR_ANY);
+
   // bind client to socket
   if((bind(sock, (struct sockaddr*)&client, sizeof(client))) < 0)
   {
@@ -101,9 +106,17 @@ int main(int argc, char* argv[])
         }
         else if(count > 0 && start < end)
         {
+//          float rtt, avgrtt;
+//          rtt = (end-start)/1000.0;
+//          avgrtt = (((float)rtt_sum)/num_rcvd)/1000.0;
+//          // the last sent packet got a reponse, output stats
+//          printf(" rtt:%.3fms, avgerage rtt:%.3fms, rcvd %d out of %d",
+//            rtt, avgrtt, num_rcvd, count);
+
           // the last sent packet got a reponse, output stats
-          printf(" rtt:%llu, avgrtt:%f, rcvd %d out of %d",
+          printf(" rtt:%lluus, avgrtt:%.3fus, rcvd %d out of %d",
             (end-start), ((float)rtt_sum)/num_rcvd, num_rcvd, count);
+
         }
         count++;
         tock = true;
@@ -128,13 +141,14 @@ int main(int argc, char* argv[])
     socklen_t addrlen;
     int bytes_rcvd = 0;
     // check every 10 microseconds
-    if(count > 0 && !((tick/10) % (TICK_PERIOD/100)))
+    if(count > 0 && !((tick/10) % 10))
     {
       if(!check)
       {
         bytes_rcvd = recvfrom(sock, buf, strlen(payload), 0,
-          (struct sockaddr*)&server, &addrlen);
+          (struct sockaddr*)&response, &addrlen);
         check = true;
+//        printf(".");
       }
     } else check = false;
 
@@ -149,13 +163,8 @@ int main(int argc, char* argv[])
         num_rcvd++;
         end = tick;
         rtt_sum += (end - start);
-        int i;
-        for(i = 0; i < bytes_rcvd; i++)
-        {
-          printf("%c", buf[i]);
-        }
       }
-      else // packet had data from a different 'count' value
+      else // packet is from a previous count value, old packet
       {
         printf("warning got packet [%d] expected [%d], rtt avg is invalid",
           id, count);
