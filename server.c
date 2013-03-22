@@ -1,4 +1,5 @@
 #include <fcntl.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
@@ -86,17 +87,23 @@ int main(int argc, char* argv[])
       printf("%d.%d.%d.%d:%d", (int)(ip & 0xff), (int)((ip >> 8) & 0xff), (int)((ip >> 16) & 0xff),
         (int)((ip >> 24) & 0xff), ntohs(client.sin_port));
 
-      int bytes_sent = sendto(sock, buf, bytes_rcvd, 0,
-        (struct sockaddr*)&client, sizeof(client));
-      printf(" sent %d bytes", bytes_sent);
+      // send a response with the probability of P
+      float roll = ((float)rand())/RAND_MAX;
 
-      printf("\n");
+      // send a response
+      if(roll <= P)
+      {
+        int bytes_sent = sendto(sock, buf, bytes_rcvd, 0,
+          (struct sockaddr*)&client, sizeof(client));
+        printf(" roll:%f, P:%f, sent %d bytes\n", roll, P, bytes_sent);
+      }
+      // don't send a reponse
+      else
+      {
+        printf(" roll:%f, P:%f, not sending\n", roll, P);
+      }
+
     }
-
-
-//        int bytes_sent = sendto(sock, payload, strlen(payload), 0,
-//          (struct sockaddr*)&server, sizeof(server));
-
     
   } // end while
 
