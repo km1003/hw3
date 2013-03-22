@@ -1,51 +1,47 @@
 sending udp packets to 70.242.185.204:54321
 [  1] timeout, rcvd 0 out of 1
-[  2] rtt:495.001ms, avgrtt:495.002ms, rcvd 1 out of 2
+[  2] rtt:200.399ms, avgrtt:200.399ms, rcvd 1 out of 2
 [  3] timeout, rcvd 1 out of 3
 [  4] timeout, rcvd 1 out of 4
 [  5] timeout, rcvd 1 out of 5
-[  6] rtt:238.301ms, avgrtt:366.651ms, rcvd 2 out of 6
-[  7] rtt:231.300ms, avgrtt:321.534ms, rcvd 3 out of 7
+[  6] rtt:207.098ms, avgrtt:203.749ms, rcvd 2 out of 6
+[  7] rtt:236.101ms, avgrtt:214.533ms, rcvd 3 out of 7
 [  8] timeout, rcvd 3 out of 8
-[  9] rtt:221.500ms, avgrtt:296.526ms, rcvd 4 out of 9
-[ 10] rtt:252.900ms, avgrtt:287.801ms, rcvd 5 out of 10
-[ 11] rtt:246.199ms, avgrtt:280.867ms, rcvd 6 out of 11
-[ 12] rtt:239.302ms, avgrtt:274.930ms, rcvd 7 out of 12
-[ 13] rtt:211.900ms, avgrtt:267.051ms, rcvd 8 out of 13
-[ 14] rtt:244.499ms, avgrtt:264.545ms, rcvd 9 out of 14
+[  9] rtt:225.001ms, avgrtt:217.150ms, rcvd 4 out of 9
+[ 10] rtt:203.798ms, avgrtt:214.479ms, rcvd 5 out of 10
+[ 11] rtt:237.202ms, avgrtt:218.267ms, rcvd 6 out of 11
+[ 12] rtt:229.898ms, avgrtt:219.928ms, rcvd 7 out of 12
+[ 13] rtt:203.900ms, avgrtt:217.925ms, rcvd 8 out of 13
+[ 14] rtt:274.004ms, avgrtt:224.156ms, rcvd 9 out of 14
 [ 15] timeout, rcvd 9 out of 15
 [ 16] timeout, rcvd 9 out of 16
-[ 17] rtt:209.099ms, avgrtt:259.001ms, rcvd 10 out of 17
+[ 17] rtt:219.101ms, avgrtt:223.650ms, rcvd 10 out of 17
 [ 18] timeout, rcvd 10 out of 18
-[ 19] rtt:234.298ms, avgrtt:256.755ms, rcvd 11 out of 19
-[ 20] rtt:226.099ms, avgrtt:254.200ms, rcvd 12 out of 20
-[ 21] rtt:199.400ms, avgrtt:249.985ms, rcvd 13 out of 21
-[ 22] rtt:231.500ms, avgrtt:248.665ms, rcvd 14 out of 22
-[ 23] rtt:224.498ms, avgrtt:247.054ms, rcvd 15 out of 23
+[ 19] rtt:250.406ms, avgrtt:226.083ms, rcvd 11 out of 19
+[ 20] rtt:226.500ms, avgrtt:226.117ms, rcvd 12 out of 20
+[ 21] rtt:218.799ms, avgrtt:225.554ms, rcvd 13 out of 21
+[ 22] rtt:233.500ms, avgrtt:226.122ms, rcvd 14 out of 22
+[ 23] rtt:246.501ms, avgrtt:227.481ms, rcvd 15 out of 23
 [ 24] timeout, rcvd 15 out of 24
-[ 25] rtt:231.502ms, avgrtt:246.082ms, rcvd 16 out of 25
-[ 26] rtt:249.601ms, avgrtt:246.289ms, rcvd 17 out of 26
-[ 27] rtt:242.199ms, avgrtt:246.061ms, rcvd 18 out of 27
-[ 28] rtt:235.200ms, avgrtt:245.490ms, rcvd 19 out of 28
+[ 25] rtt:234.500ms, avgrtt:227.919ms, rcvd 16 out of 25
+[ 26] rtt:208.401ms, avgrtt:226.771ms, rcvd 17 out of 26
+[ 27] rtt:219.700ms, avgrtt:226.378ms, rcvd 18 out of 27
+[ 28] rtt:291.502ms, avgrtt:229.806ms, rcvd 19 out of 28
 [ 29] timeout, rcvd 19 out of 29
-[ 30] rtt:224.002ms, avgrtt:244.416ms, rcvd 20 out of 30
-[ 31] rtt:234.398ms, avgrtt:243.939ms, rcvd 21 out of 31
+[ 30] rtt:221.200ms, avgrtt:229.376ms, rcvd 20 out of 30
+[ 31] rtt:231.199ms, avgrtt:229.462ms, rcvd 21 out of 31
 [ 32] timeout, rcvd 21 out of 32
-[ 33] rtt:223.099ms, avgrtt:242.991ms, rcvd 22 out of 33
-[ 34] rtt:236.702ms, avgrtt:242.718ms, rcvd 23 out of 34
-[ 35] rtt:229.500ms, avgrtt:242.167ms, rcvd 24 out of 35
-[ 36] rtt:221.498ms, avgrtt:241.340ms, rcvd 25 out of 36
-[ 37] rtt:294.601ms, avgrtt:243.389ms, rcvd 26 out of 37
+[ 33] rtt:231.699ms, avgrtt:229.564ms, rcvd 22 out of 33
+[ 34] rtt:243.401ms, avgrtt:230.166ms, rcvd 23 out of 34
+[ 35] rtt:238.502ms, avgrtt:230.513ms, rcvd 24 out of 35
+[ 36] rtt:214.499ms, avgrtt:229.872ms, rcvd 25 out of 36
+[ 37] rtt:198.400ms, avgrtt:228.662ms, rcvd 26 out of 37
 [ 38] timeout, rcvd 26 out of 38
-[ 39] rtt:264.001ms, avgrtt:244.152ms, rcvd 27 out of 39
+[ 39] rtt:208.499ms, avgrtt:227.915ms, rcvd 27 out of 39
 [ 40] timeout, rcvd 27 out of 40
-[ 41] rtt:253.302ms, avgrtt:244.479ms, rcvd 28 out of 41
+[ 41] rtt:216.302ms, avgrtt:227.500ms, rcvd 28 out of 41
 [ 42] timeout, rcvd 28 out of 42
-[ 43] rtt:280.300ms, avgrtt:245.714ms, rcvd 29 out of 43
+[ 43] rtt:225.699ms, avgrtt:227.438ms, rcvd 29 out of 43
 [ 44] timeout, rcvd 29 out of 44
-[ 45] rtt:209.600ms, avgrtt:244.511ms, rcvd 30 out of 45
-[ 46] rtt:241.300ms, avgrtt:244.407ms, rcvd 31 out of 46
-[ 47] timeout, rcvd 31 out of 47
-[ 48] timeout, rcvd 31 out of 48
-[ 49] rtt:256.499ms, avgrtt:244.785ms, rcvd 32 out of 49
+[ 45] rtt:229.300ms, avgrtt:227.500ms, rcvd 30 out of 45
 

@@ -108,7 +108,7 @@ int main(int argc, char* argv[])
         {
           // the last packet got a reponse, output stats
           printf("rtt:%.3fms, avgrtt:%.3fms, rcvd %d out of %d",
-            (end-start)/1000.0, ((((float)rtt_sum)/num_rcvd)+0.5)/1000.0,
+            (end-start)/1000.0, (((float)rtt_sum)/num_rcvd)/1000.0,
             num_rcvd, count);
         }
         count++;
