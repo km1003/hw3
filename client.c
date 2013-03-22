@@ -13,7 +13,7 @@
 #define PORT 54321
 
 // tick period in milliseconds, how fast to send packets
-#define TICK_PERIOD 1500
+#define TICK_PERIOD 2000
 
 #define true 1
 #define false 0
@@ -106,17 +106,10 @@ int main(int argc, char* argv[])
         }
         else if(count > 0 && start < end)
         {
-//          float rtt, avgrtt;
-//          rtt = (end-start)/1000.0;
-//          avgrtt = (((float)rtt_sum)/num_rcvd)/1000.0;
-//          // the last sent packet got a reponse, output stats
-//          printf(" rtt:%.3fms, avgerage rtt:%.3fms, rcvd %d out of %d",
-//            rtt, avgrtt, num_rcvd, count);
-
-          // the last sent packet got a reponse, output stats
-          printf(" rtt:%lluus, avgrtt:%.3fus, rcvd %d out of %d",
-            (end-start), ((float)rtt_sum)/num_rcvd, num_rcvd, count);
-
+          // the last packet got a reponse, output stats
+          printf("rtt:%.3fms, avgrtt:%.3fms, rcvd %d out of %d",
+            (end-start)/1000.0, ((((float)rtt_sum)/num_rcvd)+0.5)/1000.0,
+            num_rcvd, count);
         }
         count++;
         tock = true;
